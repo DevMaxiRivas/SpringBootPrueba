@@ -1,0 +1,7 @@
+# Con esta instruccion permitimos mostrar los logger utilizando debug en consola
+logging:
+  level:
+    com.spring.prueba : DEBUG
+
+# Permitimos dar reasons a la hora de enviar un status https
+server.error.include-message : always

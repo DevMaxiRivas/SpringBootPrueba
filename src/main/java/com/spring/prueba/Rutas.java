@@ -1,12 +1,15 @@
 package com.spring.prueba;
 
 import com.spring.prueba.models.Libro;
+import com.spring.prueba.models.UserData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 public class Rutas {
@@ -49,4 +52,46 @@ public class Rutas {
         return "Aprendiendo statuses http en Spring Boot ";
     }
 
+    @GetMapping("/animales/{lugar}")
+    public ResponseEntity<String> getAnimales(@PathVariable String lugar){
+        if (lugar.equals("granja")){
+            return ResponseEntity.status(HttpStatus.OK).body("Caballo, vaca, oveja");
+        } else {
+            if (lugar.equals("selva")){
+                return ResponseEntity.status(HttpStatus.OK).body("Mono, Gorila, Puma");
+            } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Lugar Invalido");
+        }
+    }
+
+    // Ejemplo generando una excepcion (error) en la parte del servidor, que muestra al cliene datos que no deberia
+
+    @GetMapping("/calcular/{numero}")
+    public int getCalculo(@PathVariable int numero){
+        throw new NullPointerException("La clave del es usuario user123, password 123 y no deberia poder leerse en el postman");
+    }
+
+    // Enviar JSONs
+    @GetMapping("/userData")
+    public ResponseEntity<String> getUserData(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header("Content-Type","aplication/json")
+                .body("{\"name\" = \"marie\" }");
+    }
+
+    // Ventaja no es necesario definir los headers
+    @GetMapping("/userData/v2")
+    public Map<String, Map<String, Object>> getUserDataV2(){
+        return Map.of("user",Map.of("name","marry", "age", 25));
+    }
+
+    // Definiendo una estructura de datos
+    @GetMapping("/userData/v3")
+    public UserData getUserDataV3(){
+        return new UserData("mary", 25, "Av Decididos 123");
+    }
+
+
+
 }
+

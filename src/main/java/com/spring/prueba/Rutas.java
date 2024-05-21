@@ -1,18 +1,44 @@
 package com.spring.prueba;
 
 import com.spring.prueba.models.Libro;
+import com.spring.prueba.models.Producto;
 import com.spring.prueba.models.UserData;
+import com.spring.prueba.myBeans.MiBean;
+import com.spring.prueba.myBeans.MiComponente;
+import com.spring.prueba.servicios.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 @RestController
 public class Rutas {
+
+//    Servicios (De esta manera se genera una dependencia dura)
+//    private OrderService orderService = new OrderService();
+
+//    Servicios (aplicando dependencia dinamcia)
+    private OrderService orderService;
+//    hacemos uso del bean que creamos
+    private MiBean miBean;
+//    hacemos uso del componente que cramos
+//    inyeccion de dependencia por atributo con la anotacion
+    @Autowired
+    private MiComponente miComponente;
+
+//    inyeccion de depencia clasica por constructor (forma prefente)
+    public Rutas(OrderService orderService, MiBean miBean){
+        this.orderService = orderService;
+        this.miBean = miBean;
+    }
+
+    // Logger
     private static Logger logger = LoggerFactory.getLogger(PruebaApplication.class);
 
     @GetMapping("/")
@@ -91,6 +117,23 @@ public class Rutas {
         return new UserData("mary", 25, "Av Decididos 123");
     }
 
+    @PostMapping("/order")
+    public String crearOrden(@RequestBody List<Producto> products){
+        orderService.saveOrder(products);
+        return "Prouctos guardados";
+    }
+
+    @GetMapping("/mibean")
+    public String saludarDesdeBean(){
+        miBean.saludar();
+        return "Completado";
+    }
+
+    @GetMapping("/micomponente")
+    public String saludarDesdeComponente(){
+        miComponente.saludarDesdeComponente();
+        return "Completado";
+    }
 
 
 }
